@@ -1,10 +1,28 @@
 // Retrieve tasks and nextId from localStorage
 let taskList = JSON.parse(localStorage.getItem("tasks"));
 let nextId = JSON.parse(localStorage.getItem("nextId"));
-const taskNameInputEl=document.querySelector("#title");
-const taskDescriptionInputEl=document.querySelector("#taskDescription");
-const taskDueDateInputEl=document.querySelector("#taskDueDate");
+const taskNameInputEl=$("#title");
+const taskDateInputEl= $("#taskDueDate");
+const taskContentInputEl=$("#taskDescription");
+const taskFormEl = $('#formModal');
 
+function saveTasksToStorage(tasks) {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }
+
+
+function readTasksFromStorage() {
+    
+    let tasks = JSON.parse(localStorage.getItem('tasks'));
+  
+    // ? If no projects were retrieved from localStorage, assign projects to a new empty array to push to later.
+    if (!tasks) {
+      tasks = [];
+    }
+    // ? Return the projects array either empty or with data in it whichever it was determined to be by the logic right above.
+    return tasks;
+  }
+  
 
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
@@ -16,20 +34,20 @@ function generateTaskId() {
 function createTaskCard(task) {
 const taskCard = $('<div>')
     .addClass('card project-card draggable my-3')
-    .attr('data-project-id',project.id);
-const taskHeader = $('<div>').addClass('card-header h4').text(project.name);
+    .attr('data-project-id',task.id);
+const taskHeader = $('<div>').addClass('card-header h4').text(task.name);
 const taskBody = $('<div>').addClass('card-body');
-const cardDescription = $('<p>').addClass('card-text').text(project.type);
-const taskDueDate = $('<p>').addClass('card-text').text(project.dueDate);
+const cardDescription = $('<p>').addClass('card-text').text(task.description);
+const taskDueDate = $('<p>').addClass('card-text').text(task.dueDate);
 const taskDeleteBtn = $('<button>')
       .addClass('btn btn-danger delete')
       .text('Delete')
-      .attr('data-project-id', project.id);
+      .attr('data-project-id', task.id);
 taskDeleteBtn.on('click', handleDeleteProject); 
 
-if (project.dueDate && project.status !== 'done') {
+if (task.dueDate && task.status !== 'done') {
     const now = dayjs();
-    const taskDueDate = dayjs(project.dueDate, 'DD/MM/YYYY');
+    const taskDueDate = dayjs(task.dueDate, 'DD/MM/YYYY');
 
     // ? If the task is due today, make the card yellow. If it is overdue, make it red.
     if (now.isSame(taskDueDate, 'day')) {
@@ -56,17 +74,30 @@ function handleAddTask(event){
 event.preventDefault();
 
 const taskName=taskNameInputEl.val();
-const taskDesp=taskDescriptionInputEl.val();
-const taskDueDate=taskDueDateInputEl.val();
+const taskDesp=taskContentInputEl.val();
+const taskDueDate=taskDateInputEl.val();
 
 const newTask = {
     name:taskName,
     description:taskDesp,
     dueDate:taskDueDate,
-    status:'to-do',
+    status:'to-do'
+}
+
+const tasks = readTasksFromStorage();
+  tasks.push(newTask);
+
+  // ? Save the updated projects array to localStorage
+  saveTasksToStorage(tasks);
+
+  // ? Clear the form inputs
+  taskNameInputEl.val('');
+  taskDateInputEl.val('');
+  taskContentInputEl.val('');
+  $('#formModal').modal('hide');
 };
 
-}
+taskFormEl.on('submit', handleAddTask);
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event){
@@ -83,14 +114,12 @@ $(document).ready(function () {
 
 // printProjectData();
 document.querySelector('button').addEventListener("click", handleAddTask);
-myModal.addEventListener('shown.bs.modal', function () {
-    myInput.focus()
-  })
 
 $('#taskDueDate').datepicker({
     changeMonth: true,
-    changeYear: true,
-  });
+    changeYear: true
+}
+);
 
   // ? Make lanes droppable
   $('.lane').droppable({
