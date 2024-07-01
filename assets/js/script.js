@@ -53,23 +53,8 @@ function renderTaskList() {
 
 // Todo: create a function to handle adding a new task
 function handleAddTask(event){
-
-    $('#popup').click(function(){
-        if (!$(this).hasClass('open')){
-          $('.form').css('display','block')
-          $(this).addClass('open');
-          $(this).text('CLOSE FORM');
-        }
-        else{
-          $('.form').css('display','none')
-          $(this).removeClass('open');
-          $(this).text('OPEN FORM');
-        }
-      });
-
-
 event.preventDefault();
-alert(querySelector("#popup"));
+
 const taskName=taskNameInputEl.val();
 const taskDesp=taskDescriptionInputEl.val();
 const taskDueDate=taskDueDateInputEl.val();
@@ -96,9 +81,12 @@ function handleDrop(event, ui) {
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
 
-printProjectData();
+// printProjectData();
 document.querySelector('button').addEventListener("click", handleAddTask);
-  
+myModal.addEventListener('shown.bs.modal', function () {
+    myInput.focus()
+  })
+
 $('#taskDueDate').datepicker({
     changeMonth: true,
     changeYear: true,
