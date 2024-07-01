@@ -5,6 +5,7 @@ const taskNameInputEl=$("#title");
 const taskDateInputEl= $("#taskDueDate");
 const taskContentInputEl=$("#taskDescription");
 const taskFormEl = $('#formModal');
+const taskContainer=$('#task-container');
 
 function saveTasksToStorage(tasks) {
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -43,7 +44,7 @@ const taskDeleteBtn = $('<button>')
       .addClass('btn btn-danger delete')
       .text('Delete')
       .attr('data-project-id', task.id);
-taskDeleteBtn.on('click', handleDeleteProject); 
+// taskDeleteBtn.on('click', handleDeleteProject); 
 
 if (task.dueDate && task.status !== 'done') {
     const now = dayjs();
@@ -58,15 +59,20 @@ if (task.dueDate && task.status !== 'done') {
     }
   }
 
-taskBody.append(taskDescription, taskDueDate, taskDeleteBtn);
-  taskCard.append(taskHeader, taskBody);
+taskBody.append(cardDescription, taskDueDate, taskDeleteBtn);
+taskCard.append(taskHeader, taskBody);
+taskContainer.append(taskCard);
+
 
 return taskCard;
 }
 
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
-
+    const tasks=readTasksFromStorage();
+    for (const task of tasks) {
+        const taskCard = createTaskCard(task);
+      }
 }
 
 // Todo: create a function to handle adding a new task
@@ -95,6 +101,8 @@ const tasks = readTasksFromStorage();
   taskDateInputEl.val('');
   taskContentInputEl.val('');
   $('#formModal').modal('hide');
+  renderTaskList();
+
 };
 
 taskFormEl.on('submit', handleAddTask);
