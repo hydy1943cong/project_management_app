@@ -25,6 +25,32 @@
       <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#formModal">Add Task</button>
     </div>
     <!-- Todo: Create a modal with a form to add tasks -->
+
+    <div id="popup" style="display: none">
+      <div class="overlay"></div>
+      <div class="content">
+        <header>
+          <div id="close">Add Task</div>
+        </header>
+        <form>
+          <fieldset>
+            <label for="title">Task Title</label>
+            <input type="text" name="title" id="title" value="homework5" class="text ui-widget-content ui-corner-all">
+            <label for="dueDate">Task Due Date</label>
+            <input type="date" name="dueDate" id="taskDueDate" value="2024-07-01" class="text ui-widget-content ui-corner-all">
+            <label for="taskdescription">Task Description</label>
+            <input type="text" name="taskDescription" id="taskDescription" value="This is the homework for Week5" class="text ui-widget-content ui-corner-all">
+            <input type="submit" label="Add Task" tabindex="-1" style="position:absolute; top:-1000px">
+          </fieldset>
+        </form>
+
+
+
+
+
+
+
+
     <div class="row swim-lanes text-center justify-content-between">
       <div class="col-12 col-lg-4 d-flex">
         <div id="to-do" class="card border-light mb-3 lane flex-grow-1">
@@ -58,6 +84,11 @@
       </div>
     </div>
   </div>
+
+
+    
+
+
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
