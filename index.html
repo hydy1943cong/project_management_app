@@ -22,7 +22,7 @@
   </header>
   <div id="task-container" class="container">
     <div class="text-center mb-5">
-      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#formModal">Add Task</button>
+      <button id= inputCall class="btn btn-success" data-bs-toggle="modal" data-bs-target="#formModal">Add Task</button>
     </div>
 <!-- Modal -->
 <div id="formModal" class="modal fade" role="dialog">
@@ -30,16 +30,26 @@
 
     <!-- Modal content-->
     <div class="modal-content">
-      <h2> Add Task</h2>
+      <h3> Add Task</h3>
       <form>
         <fieldset>
+          <div class="form-row">
+            <div class="col-6">
           <label for="title">Task Title</label>
           <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all">
+        </div>
+        <div class="col-6">
           <label for="dueDate">Task Due Date</label>
           <input type="text" name="dueDate" id="taskDueDate" class="text ui-widget-content ui-corner-all">
+        </div>
+        </div>
+        <div class="col-12">
           <label for="taskdescription">Task Description</label>
-          <input type="text" name="taskDescription" id="taskDescription"  class="text ui-widget-content ui-corner-all">
+          <input type="text" name="taskDescription" id="taskDescription" class="text ui-widget-content ui-corner-all">
+        </div>
+        <div>
           <button id="taskAdded" type="submit"> Add Task </button>
+        </div>
         </fieldset>
       </form>
     </div>

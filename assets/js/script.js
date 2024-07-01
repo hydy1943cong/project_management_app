@@ -1,3 +1,4 @@
+
 // Retrieve tasks and nextId from localStorage
 let taskList = JSON.parse(localStorage.getItem("tasks"));
 let nextId = JSON.parse(localStorage.getItem("nextId"));
@@ -33,14 +34,15 @@ function readTasksFromStorage() {
 function generateTaskId() {
     if (!nextId) {
         nextId =1;
-    }
+    } else {
     localStorage.setItem("nextId",JSON.stringify(nextId+1));
-    // return nextId;
+    nextId++;
+}
 }
 
 // Todo: create a function to create a task card
 function createTaskCard(task) {
-const taskCard = $('<div>')
+let taskCard = $('<div>')
     .addClass('card project-card draggable my-3')
     .attr('data-project-id',task.id);
 const taskHeader = $('<div>').addClass('card-header h4').text(task.name);
@@ -215,7 +217,7 @@ function handleDrop(event, ui) {
 $(document).ready(function () {
 
 printTaskData();
-document.querySelector('button').addEventListener("click", handleAddTask);
+// document.querySelector('button').addEventListener("click", handleAddTask);
 
 $('#taskDueDate').datepicker({
     changeMonth: true,
