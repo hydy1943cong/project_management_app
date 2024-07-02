@@ -30,22 +30,22 @@
 
     <!-- Modal content-->
     <div class="modal-content">
-      <h3> Add Task</h3>
-      <form>
+      <h3 class="ms-4 mt-4"> Add Task</h3>
+      <form class="ms-4 mb-4">
         <fieldset>
-          <div class="form-row">
+          <div class="row">
             <div class="col-6">
-          <label for="title">Task Title</label>
-          <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all">
-        </div>
-        <div class="col-6">
-          <label for="dueDate">Task Due Date</label>
-          <input type="text" name="dueDate" id="taskDueDate" class="text ui-widget-content ui-corner-all">
-        </div>
-        </div>
+              <label for="title">Task Title</label>
+              <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all">
+            </div>
+            <div class="col-6">
+              <label for="dueDate">Task Due Date</label>
+              <input type="text" name="dueDate" id="taskDueDate" class="text ui-widget-content ui-corner-all">
+            </div>
+         </div>
         <div class="col-12">
           <label for="taskdescription">Task Description</label>
-          <input type="text" name="taskDescription" id="taskDescription" class="text ui-widget-content ui-corner-all">
+          <textarea name="taskDescription" id="taskDescription" class="text ui-widget-content ui-corner-all p-4" rows="5" cols="40"></textarea>
         </div>
         <div>
           <button id="taskAdded" type="submit"> Add Task </button>
