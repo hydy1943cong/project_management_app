@@ -6,7 +6,7 @@ This is a project management application. You'll be able to keep track of due da
 This application is built upon the starter code provided by musical-happiness. 
 
 Below is a screenshot of the application:
-![alt text](./assets/image/screenshot%20challenge5.png)
+![alt text](./assets/image/screenshot.png.png)
 
 
 Here is the link to the webpage: https://hydy1943cong.github.io/project_management_app/

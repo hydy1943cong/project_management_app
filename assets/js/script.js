@@ -6,7 +6,7 @@ const taskNameInputEl=$("#title");
 const taskDateInputEl= $("#taskDueDate");
 const taskContentInputEl=$("#taskDescription");
 const taskFormEl = $('#formModal');
-const taskContainer=$('#task-container');
+const taskContainer=$('#task-container').addClass('draggable');
 const todoList=$('#todo-cards');
 const inProgressList=$('#in-progress-cards');
 const doneList=$('#done-cards');
@@ -35,77 +35,88 @@ function generateTaskId() {
     if (!nextId) {
         nextId =1;
     } else {
-    localStorage.setItem("nextId",JSON.stringify(nextId+1));
-    nextId++;
-}
+      nextId++;
+    }
+    localStorage.setItem("nextId",JSON.stringify(nextId));
+    return nextId;
 }
 
 // Todo: create a function to create a task card
 function createTaskCard(task) {
-let taskCard = $('<div>')
-    .addClass('card project-card draggable my-3')
-    .attr('data-project-id',task.id);
-const taskHeader = $('<div>').addClass('card-header h4').text(task.name);
-const taskBody = $('<div>').addClass('card-body');
-const cardDescription = $('<p>').addClass('card-text').text(task.description);
-const taskDueDate = $('<p>').addClass('card-text').text(task.dueDate);
-const taskDeleteBtn = $('<button>')
-      .addClass('btn btn-danger delete')
-      .text('Delete')
-      .attr('data-project-id', task.id);
-taskDeleteBtn.on('click', handleDeleteTask); 
+  let taskCard = $('<div>')
+      .addClass('card project-card draggable my-3')
+      .attr('data-project-id',task.id);
+  const taskHeader = $('<div>').addClass('card-header h4').text(task.name);
+  const taskBody = $('<div>').addClass('card-body');
+  const cardDescription = $('<p>').addClass('card-text').text(task.description);
+  const taskDueDate = $('<p>').addClass('card-text').text(task.dueDate);
+  const taskDeleteBtn = $('<button>')
+        .addClass('btn btn-danger delete')
+        .text('Delete')
+        .attr('data-project-id', task.id);
+  taskDeleteBtn.on('click', handleDeleteTask); 
 
-if (task.dueDate && task.status !== 'done') {
-    const now = dayjs();
-    const taskDueDate = dayjs(task.dueDate, 'DD/MM/YYYY');
+  if (task.dueDate && task.status !== 'done') {
+      const now = dayjs();
+      const taskDueDate = dayjs(task.dueDate, 'DD/MM/YYYY');
 
-    // ? If the task is due today, make the card yellow. If it is overdue, make it red.
-    if (now.isSame(taskDueDate, 'day')) {
-      taskCard.addClass('bg-warning text-white');
-    } else if (now.isAfter(taskDueDate)) {
-      taskCard.addClass('bg-danger text-white');
-      taskDeleteBtn.addClass('border-light');
+      // ? If the task is due today, make the card yellow. If it is overdue, make it red.
+      if (now.isSame(taskDueDate, 'day')) {
+        taskCard.addClass('bg-warning text-white');
+      } else if (now.isAfter(taskDueDate)) {
+        taskCard.addClass('bg-danger text-white');
+        taskDeleteBtn.addClass('border-light');
+      }
     }
-  }
 
-taskBody.append(cardDescription, taskDueDate, taskDeleteBtn);
-taskCard.append(taskHeader, taskBody);
-// taskContainer.append(taskCard);
+  taskBody.append(cardDescription, taskDueDate, taskDeleteBtn);
+  taskCard.append(taskHeader, taskBody);
+  
+ taskCard.draggable({
+      opacity: 0.7,
+      zIndex: 100,
+      // ? This is the function that creates the clone of the card that is dragged. This is purely visual and does not affect the data.
+      helper: function (e) {
+        // ? Check if the target of the drag event is the card itself or a child element. If it is the card itself, clone it, otherwise find the parent card  that is draggable and clone that.
+        const original = $(e.target).hasClass('ui-draggable')
+          ? $(e.target)
+          : $(e.target).closest('.ui-draggable');
+        // ? Return the clone with the width set to the width of the original card. This is so the clone does not take up the entire width of the lane. This is to also fix a visual bug where the card shrinks as it's dragged to the right.
+        return original.clone().css({
+          width: original.outerWidth(),
+        });
+      },
+    });
 
-taskCard.draggable({
-    opacity: 0.7,
-    zIndex: 100,
-    // ? This is the function that creates the clone of the card that is dragged. This is purely visual and does not affect the data.
-    helper: function (e) {
-      // ? Check if the target of the drag event is the card itself or a child element. If it is the card itself, clone it, otherwise find the parent card  that is draggable and clone that.
-      const original = $(e.target).hasClass('ui-draggable')
-        ? $(e.target)
-        : $(e.target).closest('.ui-draggable');
-      // ? Return the clone with the width set to the width of the original card. This is so the clone does not take up the entire width of the lane. This is to also fix a visual bug where the card shrinks as it's dragged to the right.
-      return original.clone().css({
-        width: original.outerWidth(),
-      });
-    },
-  });
+    if (task.status === 'to-do') {
+      $('#todo-cards').append(taskCard);
+    } else if (task.status === 'in-progress') {
+      $('#in-progress-cards').append(taskCard);
+    } else if (task.status === 'done') {
+      $('#done-cards').append(taskCard);
+    }
 
-  if (task.status === 'to-do') {
-    $('#todo-cards').append(taskCard);
-  } else if (task.status === 'in-progress') {
-    $('#in-progress-cards').append(taskCard);
-  } else if (task.status === 'done') {
-    $('#done-cards').append(taskCard);
-  }
-
-// return taskCard;
+return taskCard;
 }
 
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
-    const tasks=readTasksFromStorage();
-    for (const task of tasks) {
-        const taskCard = createTaskCard(task);
-        taskContainer.append(taskCard);
+    const tasks = readTasksFromStorage();
+    todoList.empty();
+    inProgressList.empty();
+    doneList.empty();
+
+    tasks.forEach(task => {
+      const taskCard = createTaskCard(task);
+      if (task.status === 'to-do') {
+          todoList.append(taskCard);
+      } else if (task.status === 'in-progress') {
+          inProgressList.append(taskCard);
+      } else if (task.status === 'done') {
+          doneList.append(taskCard);
       }
+  });
+
 }
 
 
@@ -128,11 +139,8 @@ function printTaskData() {
         doneList.append(createTaskCard(task));
       }
     }
-    // renderTaskList();
+    renderTaskList();
 }
-
-
-
 
 
 
@@ -171,21 +179,16 @@ taskFormEl.on('submit', handleAddTask);
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask() {
-    const taskId = $(this).attr('data-project-id');
-    const tasks = readTasksFromStorage();
+    const taskId = parseInt($(this).attr('data-project-id'));
+    let tasks = readTasksFromStorage();
   
-    // ? Remove project from the array. There is a method called `filter()` for this that is better suited which we will go over in a later activity. For now, we will use a `forEach()` loop to remove the project.
-    tasks.forEach((task) => {
-      if (task.id === taskId) {
-        tasks.splice(tasks.indexOf(task), 1);
-      }
-    });
+    tasks = tasks.filter(task => task.id !== taskId);
   
     // ? We will use our helper function to save the projects to localStorage
     saveTasksToStorage(tasks);
   
     // ? Here we use our other function to print projects back to the screen
-    printTaskData();
+    renderTaskList();
   }
   
 // Todo: create a function to handle dropping a task into a new status lane
@@ -193,22 +196,18 @@ function handleDeleteTask() {
 function handleDrop(event, ui) {
     // ? Read projects from localStorage
     const tasks = readTasksFromStorage();
-  
+    const newStatus = event.target.id.replace('-cards', '');
     // ? Get the project id from the event
     const taskId = ui.draggable.attr("data-project-id");
-  
-    // ? Get the id of the lane that the card was dropped into
-    const newStatus = event.target.id;
-  
-    for (let task of tasks) {
-      // ? Find the project card by the `id` and update the project status.
-      if (task.id === taskId) {
-        task.status = newStatus;
+    tasks.forEach(task => {
+      if (task.id === parseInt(taskId)) {
+          task.status = newStatus;
       }
-    }
+  });
+  
     // ? Save the updated projects array to localStorage (overwritting the previous one) and render the new project data to the screen.
     saveTasksToStorage(tasks);
-    printTaskData();
+    renderTaskList();
   }
 
 
@@ -216,7 +215,7 @@ function handleDrop(event, ui) {
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
 
-printTaskData();
+renderTaskList();
 // document.querySelector('button').addEventListener("click", handleAddTask);
 
 $('#taskDueDate').datepicker({
